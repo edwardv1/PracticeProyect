@@ -1,11 +1,16 @@
 import './App.css'
+import { Route, Routes } from "react-router-dom";
+import LandingPage from './views/LandingPage';
+import "tailwindcss/tailwind.css"
 
 function App() {
 
 
   return (
     <>
-      <h1>Hello World!!!</h1>
+      <Routes>
+        <Route path='/' element={<LandingPage />}/>
+      </Routes>
     </>
   )
 }
