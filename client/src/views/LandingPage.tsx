@@ -12,6 +12,9 @@ const LandingPage = () => {
         <Link to="/formDoc">
           <button>Form Doc</button>
         </Link>
+        <Link to="/formVideo">
+          <button>Form Video</button>
+        </Link>
     </div>
   )
 }

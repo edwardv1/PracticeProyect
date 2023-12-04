@@ -4,11 +4,11 @@ import ButtonCancel from '../../components/buttons/ButtonCancel.tsx';
 import { useNavigate } from 'react-router-dom';
 import ButtonCreate from '../../components/buttons/ButtonCreate.tsx';
 
-export default function FormImage() {
-    const [showLabel, setShowLabel] = useState(true);
+export default function FormVideo() {
+    const [showLabel, setShowLabel] = useState(false);
     const [errorDoc, setErrorDoc] = useState(false);
     const [file, setFile]= useState<File | null>(null);
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const handleNavigate = () => {
@@ -16,60 +16,61 @@ export default function FormImage() {
     }
 
     //Mostrar la imagen localmente antes de subirla a Firebase
-    const handleFileChange = (event) => {
-      const selectedFile = event.target.files[0];
-   
-      if (selectedFile) {
-        const objectUrl = URL.createObjectURL(selectedFile);
-        // Verificar si el tipo de archivo es una imagen
-        if (selectedFile.type.startsWith('image/')) {
-          setImageUrl(objectUrl);
-          setErrorDoc(false);
-        } else {
-          // Si no es una imagen, puedes mostrar un mensaje o realizar otra acción
-          setImageUrl(null);
-          setErrorDoc(true);
-          //setImageUrl(null); // Limpiar la URL de la imagen para evitar confusiones
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files?.[0];
+
+        if (selectedFile) {
+            const objectUrl = URL.createObjectURL(selectedFile);
+            console.log(objectUrl);
+            
+            // Verificar si el tipo de archivo es un video
+            if (selectedFile.type.startsWith('video/')) {
+                setVideoUrl(objectUrl);
+                setErrorDoc(false);
+            } else {
+                setVideoUrl(null);
+                setErrorDoc(true);
+            }
         }
         setFile(selectedFile);
-      }
     };
 
-    //Funcion que despacha los inputs
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => { 
-        console.log("Entro en el submit");
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        //Subo el archivo a Firebase
+        console.log("Entro submit");    
+        console.log(file);
+        
         try {
-          if(file) {
+          if (file) {
             const response = await uploadFile(file);
-            //Majerar la url de la imagen (Guardar en DB p.e.)
+            // Manejar la URL del video (Guardar en la base de datos, etc.)
+            setFile(null);
+            setVideoUrl(null);
             console.log(response);
-            setImageUrl(null);
           }
         } catch (error) {
           console.error(error);
-          window.alert("Failed to upload file: " + error)
-        }  
-    }
+          window.alert('Failed to upload file: ' + error);
+        }
+      };
 
     const handleCheckboxChange = () => {
       setShowLabel(!showLabel);
       setErrorDoc(false);
       if(showLabel){
-        setImageUrl(null);
+        setVideoUrl(null);
       }
     };
 
   return (
     <div className=' flex items-center justify-center bg-stone-100 h-screen w-full'>
       <div className=' flex flex-col items-center bg-white p-4 sm:p-6 rounded-lg h-[800px] w-[700px] overflow-auto'>
-          <h1 className=' text-blue-500 text-2xl'><b>Upload a image file</b></h1>
+          <h1 className=' text-blue-500 text-2xl'><b>Upload a video file</b></h1>
           <form onSubmit={handleSubmit}>
               <div>
-                  <div className="flex flex-col flex-grow">
+                  <div className="flex flex-col flex-grow ">
 
-                      <div className="mt-2 flex gap-4">
+                      <div className="mt-2 flex gap-4 items-center">
                         <p className=" mt-4 bg-none text-sm md:text-lg xl:text-xl text-black">¿Do you want to upload a file?</p>
                         <input
                           type="checkbox"
@@ -94,25 +95,26 @@ export default function FormImage() {
                         />
                         </label>
                       }
-                       {file && 
-                    <div className=' text-center'>
-                      {file.name}
-                    </div>}
+                      {file && 
+                      <div className=' text-center'>
+                        {file.name}
+                      </div>}
                   </div>
-                  {/* Mostrar la imagen antes de subira a Firebase*/}
-                  {imageUrl && (
-                    <div className=' flex justify-center items-center mt-6'>
-                      <img
-                        src={imageUrl}
-                        alt="Uploaded file preview"
-                        style={{ maxWidth: '300px' }}
-                      />
-                    </div>
-                  )}
-                  {errorDoc && 
+                  {
+                  errorDoc && 
                   <div className=' flex justify-center items-center mt-6'>
-                    Selected file is not an image
-                  </div>}
+                    Selected file is not a video
+                  </div>
+                  }
+                  {/* Mostrar el video si la URL de Firebase está disponible */}
+                  {videoUrl && (
+                    <div className='flex justify-center items-center mt-6'>
+                        <video width='600' height='450' controls>
+                            <source src={videoUrl} type='video/mp4' />
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                )}
               </div>
               <div className="flex justify-center items-center gap-6">
                 <ButtonCancel onClick={handleNavigate} /> 

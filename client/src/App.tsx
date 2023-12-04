@@ -3,10 +3,9 @@ import LandingPage from './views/LandingPage';
 import "tailwindcss/tailwind.css"
 import FormImage from "./views/form/FormImage";
 import FormDocs from "./views/form/FormDocs";
-
+import FormVideo from "./views/form/FormVideo";
 
 function App() {
-
 
   return (
     <>
@@ -14,7 +13,7 @@ function App() {
         <Route path='/' element={<LandingPage />}/>
         <Route path='/formImage' element={<FormImage />}/>
         <Route path='/formDoc' element={<FormDocs />}/>
-
+        <Route path='/formVideo' element={<FormVideo />}/>
       </Routes>
     </>
   )

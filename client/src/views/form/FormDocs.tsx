@@ -13,6 +13,7 @@ export default function FormDocs() {
     const [showLabel, setShowLabel] = useState(true);
     const [errorDoc, setErrorDoc] = useState(false);
     const [pdfFile, setPdfFile] = useState(null);
+    const [pdfName, setPdfName] = useState<string | null>(null);
     
     console.log(pdfFile);
     
@@ -24,22 +25,27 @@ export default function FormDocs() {
 
     const fileType = ["application/pdf"];
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFile = event.target.files?.[0];
-      if (selectedFile) {
-        // Verificar si el tipo de archivo es un PDF
-        if (selectedFile && fileType.includes(selectedFile.type)) {
-          let reader = new FileReader();
-          reader.readAsDataURL(selectedFile);
-          reader.onload = (e) => {
-            setPdfFile(e.target.result);
+      if (event.target.files !== null) {
+        const selectedFile = event.target.files?.[0];
+        setPdfName(selectedFile.name);        
+        
+        if (selectedFile) {
+          // Verificar si el tipo de archivo es un PDF
+          if (selectedFile && fileType.includes(selectedFile.type)) {
+            let reader = new FileReader();
+            reader.readAsDataURL(selectedFile);
+            reader.onload = (e) => {
+              setPdfFile(e.target.result);
+            }
+            setErrorDoc(false);
+          } else {
+            setErrorDoc(true); 
           }
-          setErrorDoc(false);
         } else {
-          setErrorDoc(true); 
+          setPdfFile(null);
+          setPdfName(null)
         }
-      } else {
-        setPdfFile(null);
-      }
+      } 
     };
   
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => { 
@@ -49,6 +55,7 @@ export default function FormDocs() {
           if(pdfFile) {
             const response = await uploadFile(pdfFile);
             setPdfFile(null);
+            setPdfName(null);
             //Majerar la url de la imagen (Guardar en DB p.e.)
             console.log(response);
           }
@@ -61,6 +68,7 @@ export default function FormDocs() {
     const handleCheckboxChange = () => {
       setShowLabel(!showLabel);
       setErrorDoc(false);
+      setPdfName(null)
       if(showLabel){
         setPdfFile(null);
       }
@@ -98,7 +106,11 @@ export default function FormDocs() {
                       onChange={handleFileChange}
                     />
                     </label>
-                  }   
+                  }
+                  {pdfName && 
+                    <div className=' text-center'>
+                      {pdfName}
+                    </div>}   
                 </div>
             </div>
             <div className="flex justify-center items-center gap-6">
