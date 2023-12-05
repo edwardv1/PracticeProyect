@@ -4,11 +4,13 @@ import "tailwindcss/tailwind.css"
 import FormImage from "./views/form/FormImage";
 import FormDocs from "./views/form/FormDocs";
 import FormVideo from "./views/form/FormVideo";
+import Header from "./components/header/Header";
 
 function App() {
 
   return (
     <>
+      <Header/>
       <Routes>
         <Route path='/' element={<LandingPage />}/>
         <Route path='/formImage' element={<FormImage />}/>
